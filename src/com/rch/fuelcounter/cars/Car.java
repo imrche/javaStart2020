@@ -1,9 +1,7 @@
 package com.rch.fuelcounter.cars;
 
 import com.rch.fuelcounter.util.Util;
-import com.rch.fuelcounter.cars.CarPark;
-import com.rch.fuelcounter.cars.CarType;
-import com.rch.fuelcounter.cars.RegData;
+
 
 public class Car {
     private final CarType carType;

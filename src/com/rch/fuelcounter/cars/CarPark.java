@@ -2,9 +2,7 @@ package com.rch.fuelcounter.cars;
 
 import com.rch.fuelcounter.util.MyLinkedList;
 import com.rch.fuelcounter.util.Util;
-import com.rch.fuelcounter.cars.Car;
-import com.rch.fuelcounter.cars.CarType;
-import com.rch.fuelcounter.cars.RegData;
+
 
 import java.util.*;
 

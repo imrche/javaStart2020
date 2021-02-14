@@ -2,9 +2,7 @@ package com.rch.fuelcounter.cars;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.rch.fuelcounter.cars.CarPark;
-import com.rch.fuelcounter.cars.Car;
-import com.rch.fuelcounter.cars.RegData;
+
 
 public class CarType {
     private final String type;

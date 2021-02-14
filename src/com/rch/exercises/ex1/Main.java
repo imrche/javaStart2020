@@ -18,6 +18,9 @@ public class Main {
         System.out.println("Количество элементов в массиве " + array.count());
         System.out.println("Сортированный по убыванию: " + Arrays.toString(array.sort("desc")));
 
+        array.transformTo(0);
+        array.print();
+
 
     }
 }

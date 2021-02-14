@@ -1,5 +1,7 @@
 package com.rch.exercises.ex1;
 
+import java.util.Arrays;
+
 /**ЗАДАЧА 2
  * Необходимо реализовать класс в конструктор которого передается целочисленный массив.
  * Необходимо реализовать в данном классе следующие функции:
@@ -94,8 +96,6 @@ public class MyArray {
     }
 
     public void print(){
-        for (int i = 0; i < array.length; i++) {
-            System.out.println(array[i]);
-        }
+        System.out.println(Arrays.toString(array));
     }
 }
