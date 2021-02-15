@@ -7,9 +7,9 @@ import com.rch.fuelcounter.util.Util;
 import java.util.*;
 
 public class CarPark {
-    private List<Car> cars = new ArrayList<>();
+    private static List<Car> cars = new ArrayList<>();
 
-    public void fabric(String str){
+    public static void fabric(String str){
         RegData data = new RegData(Util.parse(str));
         Car car = findCar(data.type, data.licence);
 
@@ -20,11 +20,11 @@ public class CarPark {
             add(new Car(CarType.types.get(data.type), data.licence, data.mileage, data.additional));
     }
 
-    public void add(Car car){
+    public static void add(Car car){
         cars.add(car);
     }
 
-    public List<Car> getListCar(String type){
+    public static List<Car> getListCar(String type){
         if (type != null){
             List<Car> returnList = new ArrayList<>();
             for (Car car : cars)
@@ -35,14 +35,14 @@ public class CarPark {
         return cars;
     }
 
-    public Car findCar(String type, String licence){
+    public static Car findCar(String type, String licence){
         for (Car car : cars)
             if (car.getType().equals(type) && car.getLicence().equals(licence))
                 return car;
         return null;
     }
 
-    public List<Car> sortListCar(List<Car> cars, String sortPar, String sortType) {
+    public static List<Car> sortListCar(List<Car> cars, String sortPar, String sortType) {
         MyLinkedList<Car> resultList = new MyLinkedList<>();
         LinkedList<Car> nullsList = new LinkedList<>();
         while (cars.size() > 0) {
@@ -70,7 +70,7 @@ public class CarPark {
         return resultList;
     }
 
-    public Map<String, Float> getTypeFullCost(String type){
+    public static Map<String, Float> getTypeFullCost(String type){
         Map<String, Float> agrResult = new HashMap<>();
         for (Car car : getListCar(type))
             agrResult.put(car.getType(), agrResult.getOrDefault(car.getType(), 0F) + car.getFullCost());
@@ -78,12 +78,12 @@ public class CarPark {
         return agrResult;
     }
 
-    public void showFullCost(String type){
+    public static void showFullCost(String type){
         for (Map.Entry<String, Float> e : getTypeFullCost(type).entrySet())
             System.out.println(CarType.types.get(e.getKey()).getName() + " " + e.getValue());
     }
 
-    public void showExtremumCost(boolean max){
+    public static void showExtremumCost(boolean max){
         Map.Entry<String, Float> extr = null;
 
         for (Map.Entry<String, Float> e : getTypeFullCost(null).entrySet())
@@ -94,7 +94,7 @@ public class CarPark {
             System.out.println((max ? "Наибольшая" : "Наименьшая") +  " стоимость расхода у \"" + CarType.types.get(extr.getKey()).getName() + "\" -> " + extr.getValue());
     }
 
-    public void showStat(String sortPar, String sortType){
+    public static void showStat(String sortPar, String sortType){
         for (Map.Entry<String, CarType> type : CarType.types.entrySet()) {
             System.out.println("------ " + type.getValue().getName() + " ------");
             System.out.println("Номер    Пробег      " + type.getValue().getNameAdditional());

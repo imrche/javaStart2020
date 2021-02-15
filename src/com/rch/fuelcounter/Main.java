@@ -2,7 +2,7 @@ package com.rch.fuelcounter;
 
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.cars.CarType;
-import com.rch.fuelcounter.util.Console;
+import com.rch.fuelcounter.ui.Console;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,11 +28,9 @@ public class Main {
         CarType.types.put("300", new CarType("300","Пассажирский транспорт", 11.5F,  47.50F, "Число перевезенных пассажиров"));
         CarType.types.put("400", new CarType("400","Тяжелая техника(краны)", 20F,    48.90F, "Вес поднятых грузов(т)"));
 
-        CarPark park = new CarPark();
-
         for (String s : inArr)
-            park.fabric(s);
+            CarPark.fabric(s);
 
-        Console.run(park);
+        Console.run();
     }
 }
