@@ -1,5 +1,7 @@
 package com.rch.fuelcounter.session;
 
+import com.rch.fuelcounter.cars.CarPark;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,10 +20,12 @@ public class Session {
     public static void closeSession(){
         System.out.println("Закрываем сессию");
         System.out.println("В файл пишем " + Arrays.toString(instance.sessionData.toArray()));
-        instance=null;
+
+        instance = null;
     }
 
     public static void addData(String data){
+        CarPark.fabric(data);
         instance.sessionData.add(data);
     }
 

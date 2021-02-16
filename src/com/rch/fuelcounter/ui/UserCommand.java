@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import com.rch.fuelcounter.cars.CarPark;
+import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.session.Session;
 
 public enum UserCommand {
@@ -64,6 +65,34 @@ public enum UserCommand {
             else
                 System.out.println("Данные можно добавлять только в рамках открытой смены!");
 
+        }
+    },
+    showdriverlist("Показать список водителей", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            for ( Driver driver : Driver.getDriversList().values()){
+                System.out.printf("%s (%s) - %s",driver.getName(), driver.getLogin(), driver.getAppointedDescription());
+                System.out.println();
+            }
+        }
+    },
+    appoint("Назначить водителя на машину", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            if (command.length < 2)
+                System.out.println("Недостаточно параметров");
+            //todo докинуть проверки
+            String[] carData = command[2].split("_");
+            Driver.getDriverByLogin(command[1]).appointToVehicle(CarPark.findCar(carData[0],carData[1]));
+        }
+    },
+    removeappoint("Снять водителя с машины", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            if (command.length == 0)
+                System.out.println("Недостаточно параметров");
+            //todo докинуть проверки
+            Driver.getDriverByLogin(command[1]).removeFromVehicle();
         }
     }
     ;

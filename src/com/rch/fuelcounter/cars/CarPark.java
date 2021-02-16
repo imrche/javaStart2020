@@ -14,6 +14,10 @@ public class CarPark {
         Car car = findCar(data.type, data.licence);
 
         if (car != null) {
+            if (!car.hasDriver()) {
+                System.out.println("Машина не назначена водителю!");
+                return;
+            }
             car.incrementMileage(data.mileage);
             car.incrementAdditional(data.additional);
         } else

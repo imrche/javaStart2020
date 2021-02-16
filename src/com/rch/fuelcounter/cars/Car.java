@@ -1,5 +1,6 @@
 package com.rch.fuelcounter.cars;
 
+import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.util.Util;
 
 
@@ -9,11 +10,25 @@ public class Car {
     private Integer mileage;
     private Integer additional;
 
+    private Driver driver;
+
     public Car(CarType carType, String licence, Integer mileage, Integer additional){
         this.carType = carType;
         this.licence = licence;
         this.mileage = mileage;
         this.additional = additional;
+    }
+
+    public void setDriver(Driver driver){
+        this.driver = driver;
+    }
+
+    public boolean hasDriver(){
+        return driver != null;
+    }
+
+    public String getIdentifier(){
+        return String.format("%s_%s (класс \"%s\")",carType.getType(),licence,carType.getName());
     }
 
     public String getType(){
