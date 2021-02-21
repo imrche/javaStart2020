@@ -5,6 +5,8 @@ import com.rch.fuelcounter.cars.CarType;
 import com.rch.fuelcounter.session.SessionDataManager;
 import com.rch.fuelcounter.ui.Console;
 
+import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -13,11 +15,11 @@ public class Main {
             StoredClass.loadStoredData();
         } catch (LoadDataException e) {
             System.out.println(e.getText());
-            return;
         }
 
         System.out.println("--------");
-        SessionDataManager.getSessionData(SessionDataManager.getTodaySessionName());
+        List<String> list = SessionDataManager.getSessionData(SessionDataManager.getTodaySessionName());
+        System.out.println(list);
         System.out.println("--------");
 
 /*        String[] inArr = {  "C100_1-100",

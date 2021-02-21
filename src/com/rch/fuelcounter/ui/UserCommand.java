@@ -58,7 +58,7 @@ public enum UserCommand {
         @Override
         public void run(String[] command) {
             Session.closeSession();
-        }
+        }//todo проверить перед выходом, что сессия сохранена
     },
 
     add("Добавить данные", new UserType[]{UserType.admin, UserType.user}){
