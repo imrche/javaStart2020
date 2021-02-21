@@ -34,8 +34,7 @@ public class UtilForEx4 {
 
         Collection<T> result = new HashSet<>();
         for(T obj : collection)
-            if (!result.contains(obj))
-                result.add(obj);
+            result.add(obj);
 
         return result;
     }
@@ -48,6 +47,7 @@ public class UtilForEx4 {
      */
     public static <K,V> Map<V, Collection<K>> reverseMap(Map<K, V> map){
         Map<V, Collection<K>> result = new HashMap<>();
+
         for(Map.Entry<K,V> entry : map.entrySet()){
             if (!result.containsKey(entry.getValue()))
                 result.put(entry.getValue(), new ArrayList<>());

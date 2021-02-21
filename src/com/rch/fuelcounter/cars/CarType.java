@@ -1,10 +1,13 @@
 package com.rch.fuelcounter.cars;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class CarType {
+public class CarType implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final String type;
     private final String name;
     private final float consumption;

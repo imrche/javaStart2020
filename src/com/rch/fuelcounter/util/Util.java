@@ -28,4 +28,12 @@ public class Util {
     public static Integer nvl(Integer a, Integer b){
         return a != null ? a : b;
     }
+
+    public static String splitArrayPart(String[] arr, int to, int from){
+        StringBuilder result = new StringBuilder();
+        for (int i = to; i <= from; i++)
+            result.append(arr[i]).append(" ");
+
+        return result.toString().trim();
+    }
 }

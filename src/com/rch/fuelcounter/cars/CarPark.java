@@ -5,10 +5,65 @@ import com.rch.fuelcounter.util.Util;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CarPark {
     private static List<Car> cars = new ArrayList<>();
 
+    public static Map<String, Car> getCarsList() {
+        return carsList;
+    }
+
+    public static void setCarsList(Map<String, Car> carsList) {
+        CarPark.carsList = carsList;
+    }
+
+    private static Map<String, Car> carsList = new HashMap<>();
+
+    public static Car addCar(String type, String license){
+        String key = type + "_" + license;
+        if (carsList.containsKey(key))
+            return carsList.get(key);
+
+        carsList.put(key, new Car(type,license));
+        return carsList.get(key);
+    }
+
+    public static Car getCar(String type, String license){
+        String key = type + "_" + license;
+/*        if (!carsList.containsKey(key))
+            return null;*/
+
+        return carsList.get(key);
+    }
+
+
+    public static Collection<Car> getCars(String type){
+        if (type != null)
+            return carsList.entrySet().stream()
+                    .filter(entry -> entry.getKey().contains(type + "_"))
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toList());
+
+        return carsList.values();
+    }
+
+    public static boolean checkFormat(String str){
+        RegData data = new RegData(Util.parse(str));
+        Car car = getCar(data.type, data.licence);
+        if ( car == null) {
+            System.out.println("Машина не зарегистрирована");//todo exception
+            return false;
+        }
+        if (!car.hasDriver()){
+            System.out.println("Машина не назначена водителю!");
+            return false;
+        }
+        return true;
+    }
+
+    //todo переделать на мапу с индексом type_license
     public static void fabric(String str){
         RegData data = new RegData(Util.parse(str));
         Car car = findCar(data.type, data.licence);
@@ -26,6 +81,10 @@ public class CarPark {
 
     public static void add(Car car){
         cars.add(car);
+    }
+
+    public static void setCars(List<Car> cars) {
+        CarPark.cars = cars;
     }
 
     public static List<Car> getListCar(String type){

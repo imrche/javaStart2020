@@ -3,8 +3,12 @@ package com.rch.fuelcounter.cars;
 import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.util.Util;
 
+import java.io.Serializable;
 
-public class Car {
+
+public class Car implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final CarType carType;
     private final String licence;
     private Integer mileage;
@@ -12,11 +16,21 @@ public class Car {
 
     private Driver driver;
 
+    @Deprecated
     public Car(CarType carType, String licence, Integer mileage, Integer additional){
         this.carType = carType;
         this.licence = licence;
         this.mileage = mileage;
         this.additional = additional;
+    }
+
+    public Car(String carType, String licence){
+        this(CarType.types.get(carType), licence);
+    }
+
+    public Car(CarType carType, String licence){
+        this.carType = carType;
+        this.licence = licence;
     }
 
     public void setDriver(Driver driver){

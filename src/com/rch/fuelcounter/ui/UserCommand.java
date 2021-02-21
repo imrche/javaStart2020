@@ -3,9 +3,11 @@ package com.rch.fuelcounter.ui;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.session.Session;
+import com.rch.fuelcounter.util.Util;
 
 public enum UserCommand {
     showfullcost("Показать полные затраты", new UserType[]{UserType.admin}){
@@ -43,6 +45,7 @@ public enum UserCommand {
             }
         }
     },
+
     opensession("Начать смену", new UserType[]{UserType.admin, UserType.user}){
         @Override
         public void run(String[] command) {
@@ -50,13 +53,14 @@ public enum UserCommand {
             System.out.println("Смена открыта");
         }
     },
+
     closesession("Закончить смену", new UserType[]{UserType.admin, UserType.user}){
         @Override
         public void run(String[] command) {
             Session.closeSession();
-            System.out.println("Смена закрыта");
         }
     },
+
     add("Добавить данные", new UserType[]{UserType.admin, UserType.user}){
         @Override
         public void run(String[] command) {
@@ -67,7 +71,26 @@ public enum UserCommand {
 
         }
     },
-    showdriverlist("Показать список водителей", new UserType[]{UserType.admin}){
+
+    inputcar("Добавить машину", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            if (command.length < 3)
+                System.out.println("Недостаточно параметров");
+            CarPark.addCar(command[1],command[2]);
+        }
+    },
+
+    showcars("Показать список машин", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            for(Car car : CarPark.getCars(command.length > 1 ? command[1] : null)){
+                System.out.println(car.getIdentifier() + " - " + car.getLicence());
+            }
+        }
+    },
+
+    showdrivers("Показать список водителей", new UserType[]{UserType.admin}){
         @Override
         public void run(String[] command) {
             for ( Driver driver : Driver.getDriversList().values()){
@@ -76,6 +99,17 @@ public enum UserCommand {
             }
         }
     },
+
+    hiredriver("Нанять водителя", new UserType[]{UserType.admin}){
+        @Override
+        public void run(String[] command) {
+            if (command.length < 3)
+                System.out.println("Недостаточно параметров");
+            else
+                new Driver(command[1], Util.splitArrayPart(command, 2, command.length-1));//todo не везде выход где нужно
+        }
+    },
+
     appoint("Назначить водителя на машину", new UserType[]{UserType.admin}){
         @Override
         public void run(String[] command) {
@@ -83,9 +117,11 @@ public enum UserCommand {
                 System.out.println("Недостаточно параметров");
             //todo докинуть проверки
             String[] carData = command[2].split("_");
-            Driver.getDriverByLogin(command[1]).appointToVehicle(CarPark.findCar(carData[0],carData[1]));
+            Driver.getDriverByLogin(command[1]).appointToVehicle(CarPark.getCar(carData[0],carData[1]));//todo обработка NPE
+            //todo очистить у старой машины водителя если он был
         }
     },
+
     removeappoint("Снять водителя с машины", new UserType[]{UserType.admin}){
         @Override
         public void run(String[] command) {

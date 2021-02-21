@@ -9,8 +9,8 @@ public class RegData {
     public RegData(String type, String licence, String mileage, String additional) {
         this.type = type;
         this.licence = licence;
-        this.mileage = mileage != null ? Integer.parseInt(mileage) : null;
-        this.additional = additional != null ? Integer.parseInt(additional) : null;
+        this.mileage = mileage != null ? Integer.parseInt(mileage) : null;//todo переделать на ошибку ввода
+        this.additional = additional != null ? Integer.parseInt(additional) : null;//todo переделать на ошибку ввода
     }
 
     public RegData(String[] str){

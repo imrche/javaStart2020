@@ -2,12 +2,25 @@ package com.rch.fuelcounter;
 
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.cars.CarType;
-import com.rch.fuelcounter.drivers.Driver;
+import com.rch.fuelcounter.session.SessionDataManager;
 import com.rch.fuelcounter.ui.Console;
+
 
 public class Main {
     public static void main(String[] args) {
-        String[] inArr = {  "C100_1-100",
+
+        try {
+            StoredClass.loadStoredData();
+        } catch (LoadDataException e) {
+            System.out.println(e.getText());
+            return;
+        }
+
+        System.out.println("--------");
+        SessionDataManager.getSessionData(SessionDataManager.getTodaySessionName());
+        System.out.println("--------");
+
+/*        String[] inArr = {  "C100_1-100",
                             "C200_1-120-1200",
                             "C300_1-120-30",
                             "C400_1-80-20",
@@ -22,21 +35,23 @@ public class Main {
                             "C100_1-300",
                             "C200_1-100-750",
                             "C300_1-32-15"
-        };
+        };*/
 
         CarType.types.put("100", new CarType("100","Легковой авто",          12.5F,  46.10F, ""));
         CarType.types.put("200", new CarType("200","Грузовой авто",          12F,    48.90F, "Объем перевезенного груза(м3)"));
         CarType.types.put("300", new CarType("300","Пассажирский транспорт", 11.5F,  47.50F, "Число перевезенных пассажиров"));
         CarType.types.put("400", new CarType("400","Тяжелая техника(краны)", 20F,    48.90F, "Вес поднятых грузов(т)"));
 
-        new Driver("Вася Пупкин", "pupok");
 
-
-        for (String s : inArr)
-            CarPark.fabric(s);
-
-        //Driver.getDriversList().get(0).appointToVehicle(CarPark.findCar("100","1"));
+/*        for (String s : inArr)
+            CarPark.fabric(s);*/
 
         Console.run();
+
+        try {
+            StoredClass.saveStoredData();
+        } catch (LoadDataException e) {
+            System.out.println(e.getText());
+        }
     }
 }

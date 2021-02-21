@@ -2,34 +2,50 @@ package com.rch.fuelcounter.session;
 
 import com.rch.fuelcounter.cars.CarPark;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class Session {
     private static Session instance;
 
-    private ArrayList<String> sessionData;
+    ArrayList<String> sessionData;
+    String sessionName;
 
-    private Session(){}
+    Session(){
+        sessionData = new ArrayList<>();
+        sessionName = SessionDataManager.getTodaySessionName();
+    }
 
     public static void openSession(){
         instance = new Session();
-        instance.sessionData = new ArrayList<>();
+
+        if (SessionDataManager.isTodaySessionExists())
+            System.out.println("Смена сегодняшнего дня уже существует и будет открыта для дозаписи.");
     }
 
     public static void closeSession(){
-        System.out.println("Закрываем сессию");
-        System.out.println("В файл пишем " + Arrays.toString(instance.sessionData.toArray()));
-
-        instance = null;
+        try {
+            FileWriter fw =  new FileWriter(SessionDataManager.getSessionPath(instance.sessionName),true);
+            for (String s : instance.sessionData)
+                fw.append(s).append("\n");
+            fw.close();
+            instance = null;
+            System.out.println("Смена закрыта");
+        } catch (IOException e) {
+            System.out.println("ОШИБКА при сохранении данных смены! Смена не закрыта!");
+        }
     }
 
     public static void addData(String data){
-        CarPark.fabric(data);
-        instance.sessionData.add(data);
+        if (CarPark.checkFormat(data))
+            instance.sessionData.add(data);
     }
 
     public static boolean isSessionOpen(){
         return instance != null;
     }
+
+    //public static Map<String,>
 }
