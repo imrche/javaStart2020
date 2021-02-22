@@ -38,7 +38,7 @@ public class SessionDataManager {
     }
 
     private static boolean isAccording(String fileName, Integer start, Integer end){
-        if (!Pattern.compile("[0-9]{8}\\" + SessionDataManager.sessionFileExtension)
+        if (!Pattern.compile("[0-9]{8}\\" + SessionDataManager.sessionFileExtension)//todo просто Pattern.matches(patt,txt)
                     .matcher(fileName)
                     .matches())
             return false;

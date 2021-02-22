@@ -1,5 +1,7 @@
 package com.rch.fuelcounter.cars;
 
+import com.rch.fuelcounter.session.AnalysisData;
+import com.rch.fuelcounter.session.SessionDataManager;
 import com.rch.fuelcounter.util.MyLinkedList;
 import com.rch.fuelcounter.util.Util;
 
@@ -86,7 +88,7 @@ public class CarPark {
     public static void setCars(List<Car> cars) {
         CarPark.cars = cars;
     }
-
+    @Deprecated
     public static List<Car> getListCar(String type){
         if (type != null){
             List<Car> returnList = new ArrayList<>();
@@ -97,7 +99,7 @@ public class CarPark {
         }
         return cars;
     }
-
+    @Deprecated
     public static Car findCar(String type, String licence){
         for (Car car : cars)
             if (car.getType().equals(type) && car.getLicence().equals(licence))
@@ -133,23 +135,39 @@ public class CarPark {
         return resultList;
     }
 
-    public static Map<String, Float> getTypeFullCost(String type){
+    private static Float calcFullCostCar(Car car, AnalysisData data){
+        return data.getCarMileage(car) * car.getCarType2().getCostOnHundred() / 100
+                + data.getCarMileage(car) * car.getDriver().getTariff();
+    }
+
+    public static Map<String, Float> getTypeFullCost(String type, AnalysisData data){
         Map<String, Float> agrResult = new HashMap<>();
-        for (Car car : getListCar(type))
-            agrResult.put(car.getType(), agrResult.getOrDefault(car.getType(), 0F) + car.getFullCost());
+        for (Car car : getCars(type))
+            agrResult.put(car.getType(), agrResult.getOrDefault(car.getType(), 0F) + calcFullCostCar(car,data));
 
         return agrResult;
     }
 
+    public static void showFullCost2(String type){
+
+        //принимаем пока что за сегодня по дефолту
+        for (Map.Entry<String, Float> e : getTypeFullCost(type,null).entrySet())
+            System.out.println(CarType.types.get(e.getKey()).getName() + " " + e.getValue());
+    }
     public static void showFullCost(String type){
-        for (Map.Entry<String, Float> e : getTypeFullCost(type).entrySet())
+
+        //принимаем пока что за сегодня по дефолту
+        AnalysisData data = new AnalysisData(SessionDataManager.getTodaySessionName());
+
+
+        for (Map.Entry<String, Float> e : getTypeFullCost(type,data).entrySet())
             System.out.println(CarType.types.get(e.getKey()).getName() + " " + e.getValue());
     }
 
     public static void showExtremumCost(boolean max){
         Map.Entry<String, Float> extr = null;
 
-        for (Map.Entry<String, Float> e : getTypeFullCost(null).entrySet())
+        for (Map.Entry<String, Float> e : getTypeFullCost(null,null).entrySet())
             if (Util.compare(e.getValue(), extr != null ? extr.getValue() : e.getValue(), max))
                 extr = e;
 

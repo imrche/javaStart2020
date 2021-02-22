@@ -2,6 +2,7 @@ package com.rch.fuelcounter;
 
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.cars.CarType;
+import com.rch.fuelcounter.session.AnalysisData;
 import com.rch.fuelcounter.session.SessionDataManager;
 import com.rch.fuelcounter.ui.Console;
 
@@ -18,8 +19,9 @@ public class Main {
         }
 
         System.out.println("--------");
-        List<String> list = SessionDataManager.getSessionData(SessionDataManager.getTodaySessionName());
-        System.out.println(list);
+        new AnalysisData(SessionDataManager.getTodaySessionName());
+        //List<String> list = SessionDataManager.getSessionData(SessionDataManager.getTodaySessionName());
+        //System.out.println(list);
         System.out.println("--------");
 
 /*        String[] inArr = {  "C100_1-100",

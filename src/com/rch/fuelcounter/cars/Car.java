@@ -84,4 +84,13 @@ public class Car implements Serializable {
     public float getFullCost(){
         return carType.getCostOnHundred() * mileage / 100;
     }
+
+    public CarType getCarType2(){
+        return carType;
+    }
+
+
+    public Driver getDriver() {
+        return driver;
+    }
 }

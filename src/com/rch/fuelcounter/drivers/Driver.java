@@ -46,6 +46,10 @@ public class Driver implements Serializable {
         car = null;
     }
 
+    public Integer getTariff(){
+        return defaultTariff;
+    }
+
     public boolean isAppointedToCar(){
         return car != null;
     }
