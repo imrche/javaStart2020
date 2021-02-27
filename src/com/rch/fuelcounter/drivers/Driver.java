@@ -36,9 +36,9 @@ public class Driver implements Serializable {
     }
 
     public void appointToVehicle(Car car){
-        if (this.car.hasDriver())//todo подумать надо ли оно(перекрестные ссылки) вообще
+        if (this.car != null && this.car.hasDriver())//todo подумать надо ли оно(перекрестные ссылки) вообще
             this.car.getDriver().appointToVehicle(null);
-        this.car
+
         this.car = car;
         this.car.setDriver(this);
     }

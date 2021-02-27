@@ -1,12 +1,14 @@
 package com.rch.fuelcounter.console;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
+import com.rch.fuelcounter.kpi.KPI;
 import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
+import com.rch.fuelcounter.cars.CarType;
 import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.exceptions.*;
+import com.rch.fuelcounter.kpi.CarTypeGroupedData;
 import com.rch.fuelcounter.session.Session;
 import com.rch.fuelcounter.ui.UserType;
 
@@ -24,7 +26,7 @@ public enum ConsoleCmd {
         public void showDescription() {
             System.out.println(this.name().toUpperCase() + " - вывести общие затраты по видам транспорта");
             System.out.println("    -t ограничение по типу авто");
-            System.out.println("    Задание периода анализа (dd/mm/yy) [если не указаны, анализируются все данные]:");//todo сделать чтобы все
+            System.out.println("    Задание периода анализа (dd/mm/yy) [если не указаны, анализируются все данные]:");
             System.out.println("        -s начало периода (если -e не указан, то берутся данные только за этот день)");
             System.out.println("        -e окончание периода");
             System.out.println("");
@@ -32,9 +34,12 @@ public enum ConsoleCmd {
 
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
-            CarPark.showFullCost(   command.getKeyValue("t"), 
-                                    command.getKeyValue("s"),
-                                    command.getKeyValue("e"));
+            Map<CarType, Float> fullCostData = KPI.getTypeFullCost( command.getKeyValue("t"),
+                                                                    command.getKeyValue("s"),
+                                                                    command.getKeyValue("e"));
+            for (Map.Entry<CarType, Float> e : fullCostData.entrySet())
+                System.out.println(e.getKey().getName() + " " + e.getValue());
+
         }
     },
 
@@ -56,10 +61,22 @@ public enum ConsoleCmd {
          }
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
-            CarPark.showStat(   command.getKeyValue("f","mile"),
-                                command.getKeyValue("t","asc"),
-                                command.getKeyValue("s"),
-                                command.getKeyValue("e"));
+
+             CarTypeGroupedData statistic =  KPI.getStatistic(command.getKeyValue("s"), command.getKeyValue("e"));
+
+             if (statistic.getTypeList().isEmpty())
+                 throw new ConsoleCommandException("Не найдено данных для отображения!");
+
+             for (CarType carType : statistic.getTypeList()){
+                 System.out.println("------ " + carType.getName() + " ------");
+                 System.out.println("Номер    Пробег      " + carType.getNameAdditional());
+                 List<CarTypeGroupedData.CarData> list = statistic.getDataList(carType);
+                 list.sort(new CarTypeGroupedData.CarDataComparator(command.getKeyValue("f","mile"),command.getKeyValue("t","asc")));
+
+                 for (CarTypeGroupedData.CarData carData : list){
+                     System.out.printf("%s        %s         %s%n", carData.car.getLicence(), carData.mileage == null ? "" : carData.mileage, carData.additional);
+                 }
+             }
         }
     },
 
@@ -79,9 +96,13 @@ public enum ConsoleCmd {
 
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
-            CarPark.showExtremumCost(   command.getValue("max"),
-                                        command.getKeyValue("s"),
-                                        command.getKeyValue("e"));
+            KPI.Extrema extrema = KPI.getExtremaCost(   command.getValue("max"),
+                                                        command.getKeyValue("s"),
+                                                        command.getKeyValue("e"));
+            if (extrema.value == null)
+                throw new ConsoleCommandException("Не удалось определить запрошенный экстремум");
+
+            System.out.println((extrema.isMaxima ? "Наибольшая" : "Наименьшая") +  " стоимость расхода у \"" + extrema.vehicleType.getName() + "\" -> " + extrema.value);
         }
     },
 

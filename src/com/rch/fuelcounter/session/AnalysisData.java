@@ -4,7 +4,6 @@ import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.cars.ParsedSessionData;
 import com.rch.fuelcounter.exceptions.IncorrectInputData;
-import com.rch.fuelcounter.util.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,15 +11,19 @@ import java.util.Map;
 
 
 public class AnalysisData {
-    class Data {
-        Integer mileage = 0;
-        Integer additional = 0;
+    public static class Data {//скрыть
+        public Integer mileage;
+        public Integer additional = 0;
 
         Data (ParsedSessionData parsedSessionData){
             add(parsedSessionData);
         }
+        //todo разгрести помойку с null значениями
         void add(ParsedSessionData parsedSessionData){
-            mileage += parsedSessionData.mileage != null ? parsedSessionData.mileage : 0;
+            if (parsedSessionData.mileage != null && mileage == null)
+                mileage = 0;
+            if (parsedSessionData.mileage != null)
+                mileage += parsedSessionData.mileage;
             additional += parsedSessionData.additional != null ? parsedSessionData.additional : 0;
         }
     }

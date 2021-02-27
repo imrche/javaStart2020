@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class ParsedInput {
     //шаблон поиска "-ключ значение"
-    private final Pattern commandKeyPattern = Pattern.compile("-[a-z]+\\s+[a-z0-9]+");
+    private final Pattern commandKeyPattern = Pattern.compile("-[a-z]+\\s+[a-z0-9_]+");
 
     //Управляющая команда
     private String command;

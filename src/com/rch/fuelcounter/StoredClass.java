@@ -3,6 +3,7 @@ package com.rch.fuelcounter;
 import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.drivers.Driver;
+import com.rch.fuelcounter.exceptions.LoadDataException;
 import com.rch.fuelcounter.session.Session;
 
 import java.io.*;

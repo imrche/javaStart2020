@@ -2,6 +2,7 @@ package com.rch.fuelcounter;
 
 import com.rch.fuelcounter.cars.CarType;
 import com.rch.fuelcounter.console.Console;
+import com.rch.fuelcounter.exceptions.LoadDataException;
 
 public class Main {
     public static void main(String[] args) {

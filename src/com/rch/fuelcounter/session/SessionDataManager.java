@@ -108,16 +108,13 @@ public class SessionDataManager {
      * @return факт соответствия
      */
     private static boolean isMatching(String fileName, Integer start, Integer end){
-/*        if (!Pattern.compile("[0-9]{8}\\" + SessionDataManager.sessionFileExtension)//
-                    .matcher(fileName)
-                    .matches())*/
         if (!Pattern.matches("[0-9]{8}\\" + SessionDataManager.sessionFileExtension, fileName))
             return false;
 
         Integer fileNumber = Integer.parseInt(fileName.replace(SessionDataManager.sessionFileExtension,""));
 
         if (end == null)
-            return fileNumber.equals(start);
+            return start == null || fileNumber.equals(start);
         else
             return fileNumber >= start && fileNumber <= end;
     }

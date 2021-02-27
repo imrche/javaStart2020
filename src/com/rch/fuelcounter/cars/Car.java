@@ -2,7 +2,6 @@ package com.rch.fuelcounter.cars;
 
 import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.exceptions.ApplicationException;
-import com.rch.fuelcounter.util.Util;
 
 import java.io.Serializable;
 
@@ -41,18 +40,11 @@ public class Car implements Serializable {
         return String.format("%s_%s (класс \"%s\")",carType.getType(),licence,carType.getName());
     }
 
-    public String getType(){
-        return carType.getType();
-    }
     public String getLicence() {
         return licence;
     }
 
-
-    public CarType getCarType2(){
+    public CarType getCarType(){
         return carType;
     }
-
-
-
 }

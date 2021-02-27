@@ -1,4 +1,4 @@
-package com.rch.fuelcounter;
+package com.rch.fuelcounter.exceptions;
 
 public class LoadDataException extends Exception{
     private String text;

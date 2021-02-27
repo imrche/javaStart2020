@@ -4,7 +4,6 @@ import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
 import com.rch.fuelcounter.cars.ParsedSessionData;
 import com.rch.fuelcounter.exceptions.*;
-import com.rch.fuelcounter.util.Util;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class Session {
         if (!isSessionOpen())
             throw new SessionError("Смена не открыта!");
 
-       ParsedSessionData parsedSessionData = Util.sessionDataParse(data);
+       ParsedSessionData parsedSessionData = sessionDataParse(data);
 
         Car car = CarPark.getCar(parsedSessionData.type, parsedSessionData.licence);
         if ( car == null)
@@ -58,5 +57,13 @@ public class Session {
 
     public static boolean isSessionOpen(){
         return instance != null;
+    }
+
+    public static ParsedSessionData sessionDataParse(String sessionData) throws IncorrectInputData {
+        try {
+            return new ParsedSessionData(sessionData);
+        } catch (IncorrectInputData e) {
+            throw new IncorrectInputData("Некорректный формат строки " + sessionData + ": " + e.getMessage());
+        }
     }
 }
