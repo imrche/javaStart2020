@@ -25,7 +25,9 @@ public class Driver implements Serializable {
         drivers.put(login,this);
     }
 
-    public static Driver getDriverByLogin(String login){
+    public static Driver getDriverByLogin(String login) throws ApplicationException {
+        if(!drivers.containsKey(login))
+            throw new ApplicationException("Водитель с сетевым именем " + login + " не найден!");
         return drivers.get(login);
     }
 
@@ -34,6 +36,9 @@ public class Driver implements Serializable {
     }
 
     public void appointToVehicle(Car car){
+        if (this.car.hasDriver())//todo подумать надо ли оно(перекрестные ссылки) вообще
+            this.car.getDriver().appointToVehicle(null);
+        this.car
         this.car = car;
         this.car.setDriver(this);
     }

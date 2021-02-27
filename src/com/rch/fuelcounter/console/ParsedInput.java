@@ -1,5 +1,8 @@
 package com.rch.fuelcounter.console;
 
+import com.rch.fuelcounter.exceptions.ApplicationException;
+import com.rch.fuelcounter.exceptions.NullCommandValueException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +76,12 @@ public class ParsedInput {
     }
 
     public String getValue() {
+        return value;
+    }
+
+    public String getValue(Boolean safe) throws NullCommandValueException {
+        if (value == null && safe)
+            throw new NullCommandValueException("Для " + this.command + " не получено значения");
         return value;
     }
 

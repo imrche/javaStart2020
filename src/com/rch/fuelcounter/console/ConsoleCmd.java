@@ -247,11 +247,10 @@ public enum ConsoleCmd {
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
             try {
-                Driver.getDriverByLogin(command.getValue()).appointToVehicle(CarPark.getCar(command.getKeyValue("v")));//todo обработка NPE
+                Driver.getDriverByLogin(command.getValue(true)).appointToVehicle(CarPark.getCar(command.getKeyValue("v")));
             } catch (ApplicationException e) {
                 throw new ConsoleCommandException(e.getMessage());
             }
-            //todo очистить у старой машины водителя если он был
         }
     },
 
@@ -266,7 +265,13 @@ public enum ConsoleCmd {
         }
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
-            Driver.getDriverByLogin(command.getValue()).removeFromVehicle();
+            try {
+                Driver.getDriverByLogin(command.getValue(true)).removeFromVehicle();
+            } catch (NullCommandValueException e) {
+                throw new ConsoleCommandException("Не указано сетевое имя водителя!");
+            } catch (ApplicationException e){
+                throw new ConsoleCommandException(e.getMessage());
+            }
         }
     },
 
