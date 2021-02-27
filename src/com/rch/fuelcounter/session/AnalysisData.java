@@ -2,7 +2,8 @@ package com.rch.fuelcounter.session;
 
 import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
-import com.rch.fuelcounter.cars.RegData;
+import com.rch.fuelcounter.cars.ParsedSessionData;
+import com.rch.fuelcounter.exceptions.IncorrectInputData;
 import com.rch.fuelcounter.util.Util;
 
 import java.util.HashMap;
@@ -15,12 +16,12 @@ public class AnalysisData {
         Integer mileage = 0;
         Integer additional = 0;
 
-        Data (RegData regData){
-            add(regData);
+        Data (ParsedSessionData parsedSessionData){
+            add(parsedSessionData);
         }
-        void add(RegData regData){
-            mileage += regData.mileage != null ? regData.mileage : 0;
-            additional += regData.additional != null ? regData.additional : 0;
+        void add(ParsedSessionData parsedSessionData){
+            mileage += parsedSessionData.mileage != null ? parsedSessionData.mileage : 0;
+            additional += parsedSessionData.additional != null ? parsedSessionData.additional : 0;
         }
     }
 
@@ -32,14 +33,17 @@ public class AnalysisData {
 
     public Map<Car, Data> map = new HashMap<>();
 
-    public AnalysisData(String day){
-        this(day,null);
-    }
-    public AnalysisData(String startPeriod, String endPeriod){
-        rawData = SessionDataManager.getSessionData(startPeriod,endPeriod);
+    public AnalysisData(Integer startPeriod, Integer endPeriod){
+        rawData = SessionDataManager.getSessionData(startPeriod, endPeriod);
 
         for (String s : rawData){
-            RegData parsedData = new RegData(Util.parse(s));
+            ParsedSessionData parsedData;
+            try {
+                parsedData = new ParsedSessionData(s);
+            } catch (IncorrectInputData incorrectInputData) {
+                System.out.println("Строка "+ s + " имеет некорректный формат и будет проигнорирована");
+                continue;
+            }
             Car car = CarPark.getCar(parsedData.type, parsedData.licence);
 
             if (car != null) {

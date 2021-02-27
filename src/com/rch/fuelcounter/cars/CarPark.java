@@ -1,15 +1,19 @@
 package com.rch.fuelcounter.cars;
 
+import com.rch.fuelcounter.exceptions.ApplicationException;
+import com.rch.fuelcounter.exceptions.CarExistException;
+import com.rch.fuelcounter.exceptions.IncorrectInputData;
 import com.rch.fuelcounter.session.AnalysisData;
 import com.rch.fuelcounter.session.SessionDataManager;
 import com.rch.fuelcounter.util.MyLinkedList;
 import com.rch.fuelcounter.util.Util;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * Управление автопарком
+ */
 public class CarPark {
     private static List<Car> cars = new ArrayList<>();
 
@@ -23,7 +27,7 @@ public class CarPark {
 
     private static Map<String, Car> carsList = new HashMap<>();
 
-    public static Car addCar(String type, String license){
+    public static Car addCar(String type, String license) throws ApplicationException {
         String key = type + "_" + license;
         if (carsList.containsKey(key))
             return carsList.get(key);
@@ -34,9 +38,14 @@ public class CarPark {
 
     public static Car getCar(String type, String license){
         String key = type + "_" + license;
-/*        if (!carsList.containsKey(key))
-            return null;*/
+        return carsList.get(key);
+    }
 
+    public static Car getCar(String key) throws ApplicationException {
+        if (key == null)//todo проверить на шаблон ключа
+            throw new ApplicationException("Для поиска машины передан пустой ключ!");
+        if (!carsList.containsKey(key))
+            throw new CarExistException("Машина с кодом " + key + " не найдена!");
         return carsList.get(key);
     }
 
@@ -51,35 +60,6 @@ public class CarPark {
         return carsList.values();
     }
 
-    public static boolean checkFormat(String str){
-        RegData data = new RegData(Util.parse(str));
-        Car car = getCar(data.type, data.licence);
-        if ( car == null) {
-            System.out.println("Машина не зарегистрирована");//todo exception
-            return false;
-        }
-        if (!car.hasDriver()){
-            System.out.println("Машина не назначена водителю!");
-            return false;
-        }
-        return true;
-    }
-
-    //todo переделать на мапу с индексом type_license
-    public static void fabric(String str){
-        RegData data = new RegData(Util.parse(str));
-        Car car = findCar(data.type, data.licence);
-
-        if (car != null) {
-            if (!car.hasDriver()) {
-                System.out.println("Машина не назначена водителю!");
-                return;
-            }
-            car.incrementMileage(data.mileage);
-            car.incrementAdditional(data.additional);
-        } else
-            add(new Car(CarType.types.get(data.type), data.licence, data.mileage, data.additional));
-    }
 
     public static void add(Car car){
         cars.add(car);
@@ -88,26 +68,17 @@ public class CarPark {
     public static void setCars(List<Car> cars) {
         CarPark.cars = cars;
     }
-    @Deprecated
-    public static List<Car> getListCar(String type){
-        if (type != null){
-            List<Car> returnList = new ArrayList<>();
-            for (Car car : cars)
-                if (car.getType().equals(type))
-                    returnList.add(car);
-            return returnList;
-        }
-        return cars;
-    }
-    @Deprecated
-    public static Car findCar(String type, String licence){
-        for (Car car : cars)
-            if (car.getType().equals(type) && car.getLicence().equals(licence))
-                return car;
-        return null;
+
+    public static Integer getSorterParam(String type, Car car,AnalysisData data){
+        if(type == null || type.equals("mile"))//todo бросать прагму и обрабатывать если тип не передали
+            return data.getCarMileage(car);
+        else if (type.equals("add"))
+            return data.getCarAdditional(car);
+        else
+            return null;
     }
 
-    public static List<Car> sortListCar(List<Car> cars, String sortPar, String sortType) {
+    public static Collection<Car> sortListCar(Collection<Car> cars, String sortPar, String sortType, AnalysisData data) {
         MyLinkedList<Car> resultList = new MyLinkedList<>();
         LinkedList<Car> nullsList = new LinkedList<>();
         while (cars.size() > 0) {
@@ -115,14 +86,14 @@ public class CarPark {
             Integer sortValue;
             Car carTmp = null;
             for (Car car:cars) {
-                sortValue = car.getSorterParam(sortPar);
+                sortValue = getSorterParam(sortPar,car,data);
                 if (sortValue == null){
                     nullsList.add(car);
                     continue;
                 }
-
-                if (car.getSorterParam(sortPar) >= i) {
-                    i = car.getSorterParam(sortPar);
+//todo навести порядок
+                if (getSorterParam(sortPar,car,data) >= i) {
+                    i = getSorterParam(sortPar,car,data);
                     carTmp = car;
                 }
             }
@@ -148,39 +119,34 @@ public class CarPark {
         return agrResult;
     }
 
-    public static void showFullCost2(String type){
-
-        //принимаем пока что за сегодня по дефолту
-        for (Map.Entry<String, Float> e : getTypeFullCost(type,null).entrySet())
-            System.out.println(CarType.types.get(e.getKey()).getName() + " " + e.getValue());
-    }
-    public static void showFullCost(String type){
-
-        //принимаем пока что за сегодня по дефолту
-        AnalysisData data = new AnalysisData(SessionDataManager.getTodaySessionName());
-
+    public static void showFullCost(String type, String startPeriod, String endPeriod){
+        AnalysisData data = SessionDataManager.collectAnalysisData(startPeriod,endPeriod);
 
         for (Map.Entry<String, Float> e : getTypeFullCost(type,data).entrySet())
             System.out.println(CarType.types.get(e.getKey()).getName() + " " + e.getValue());
     }
 
-    public static void showExtremumCost(boolean max){
+    public static void showExtremumCost(String typeExtremum, String startPeriod, String endPeriod){
+        AnalysisData data = SessionDataManager.collectAnalysisData(startPeriod,endPeriod);
         Map.Entry<String, Float> extr = null;
+        boolean isMaximum = typeExtremum.equals("max");
 
-        for (Map.Entry<String, Float> e : getTypeFullCost(null,null).entrySet())
-            if (Util.compare(e.getValue(), extr != null ? extr.getValue() : e.getValue(), max))
+        for (Map.Entry<String, Float> e : getTypeFullCost(null,data).entrySet())
+            if (Util.compare(e.getValue(), extr != null ? extr.getValue() : e.getValue(), isMaximum))
                 extr = e;
 
         if (extr != null)
-            System.out.println((max ? "Наибольшая" : "Наименьшая") +  " стоимость расхода у \"" + CarType.types.get(extr.getKey()).getName() + "\" -> " + extr.getValue());
+            System.out.println((isMaximum ? "Наибольшая" : "Наименьшая") +  " стоимость расхода у \"" + CarType.types.get(extr.getKey()).getName() + "\" -> " + extr.getValue());
     }
 
-    public static void showStat(String sortPar, String sortType){
+    public static void showStat(String sortPar, String sortType, String startPeriod, String endPeriod){
+        AnalysisData data = SessionDataManager.collectAnalysisData(startPeriod,endPeriod);
+
         for (Map.Entry<String, CarType> type : CarType.types.entrySet()) {
             System.out.println("------ " + type.getValue().getName() + " ------");
             System.out.println("Номер    Пробег      " + type.getValue().getNameAdditional());
-            for (Car car: sortListCar(getListCar(type.getKey()),sortPar,sortType))
-                System.out.printf("%s        %s         %s%n",car.getLicence(), car.getMileage(), car.getAdditional());
+            for (Car car: sortListCar(getCars(type.getKey()),sortPar,sortType,data))
+                System.out.printf("%s        %s         %s%n",car.getLicence(), data.getCarMileage(car), data.getCarAdditional(car));
         }
     }
 }

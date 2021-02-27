@@ -1,6 +1,10 @@
 package com.rch.fuelcounter.session;
 
+import com.rch.fuelcounter.cars.Car;
 import com.rch.fuelcounter.cars.CarPark;
+import com.rch.fuelcounter.cars.ParsedSessionData;
+import com.rch.fuelcounter.exceptions.*;
+import com.rch.fuelcounter.util.Util;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,27 +29,34 @@ public class Session {
             System.out.println("Смена сегодняшнего дня уже существует и будет открыта для дозаписи.");
     }
 
-    public static void closeSession(){
-        try {
-            FileWriter fw =  new FileWriter(SessionDataManager.getSessionPath(instance.sessionName),true);
+    public static void closeSession() throws CloseSessionError {
+        try (FileWriter fw =  new FileWriter(SessionDataManager.getSessionPath(instance.sessionName),true)) {
             for (String s : instance.sessionData)
                 fw.append(s).append("\n");
             fw.close();
             instance = null;
-            System.out.println("Смена закрыта");
         } catch (IOException e) {
-            System.out.println("ОШИБКА при сохранении данных смены! Смена не закрыта!");
+            throw new CloseSessionError("Ошибка при сохранении данных смены!");
         }
     }
 
-    public static void addData(String data){
-        if (CarPark.checkFormat(data))
-            instance.sessionData.add(data);
+    public static void addData(String data) throws IncorrectInputData, CarExistException, AppointedDriverExistException, SessionError {
+        if (!isSessionOpen())
+            throw new SessionError("Смена не открыта!");
+
+       ParsedSessionData parsedSessionData = Util.sessionDataParse(data);
+
+        Car car = CarPark.getCar(parsedSessionData.type, parsedSessionData.licence);
+        if ( car == null)
+            throw new CarExistException("Указанная машина не зарегистрирована!");//todo недотестировано
+
+        if (!car.hasDriver())
+            throw new AppointedDriverExistException("Машина не назначена водителю!");
+
+        instance.sessionData.add(data);
     }
 
     public static boolean isSessionOpen(){
         return instance != null;
     }
-
-    //public static Map<String,>
 }

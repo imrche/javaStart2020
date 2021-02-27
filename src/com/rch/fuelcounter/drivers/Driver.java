@@ -1,15 +1,10 @@
 package com.rch.fuelcounter.drivers;
 
 import com.rch.fuelcounter.cars.Car;
-import com.rch.fuelcounter.session.Session;
+import com.rch.fuelcounter.exceptions.ApplicationException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Driver implements Serializable {
@@ -22,7 +17,9 @@ public class Driver implements Serializable {
     private final String name;
     private Car car = null;
 
-    public Driver(String login, String name){
+    public Driver(String login, String name) throws ApplicationException {
+        if (login == null || name == null)
+            throw new ApplicationException("Не все данные для добавления водителя указаны!");
         this.login = login;
         this.name = name;
         drivers.put(login,this);
@@ -50,10 +47,6 @@ public class Driver implements Serializable {
         return defaultTariff;
     }
 
-    public boolean isAppointedToCar(){
-        return car != null;
-    }
-
     public static Map<String,Driver> getDriversList(){
         return drivers;
     }
@@ -75,25 +68,4 @@ public class Driver implements Serializable {
             return "НЕ НАЗНАЧЕН";
         return car.getIdentifier();
     }
-
-/*    public static void loadData() {
-        String path = Session.class.getClassLoader().getResource("").getPath();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(path + "drivers.data"));
-
-            String line = br.readLine();
-            while(!line.isEmpty()){
-                String[] driverData = line.split("/");
-                if (driverData.length == 2)
-                    new Driver(driverData[1].trim(),driverData[0].trim());
-                else
-                    System.out.println("ВНИМАНИЕ! При загрузке данных водителей найден строка не соответствующая формату (" + line + ")");
-
-                line = br.readLine();
-            }
-        } catch (Exception e) {
-            System.out.println("ОШИБКА при загрузке данных водителей!");
-        }
-    }*/
 }

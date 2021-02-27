@@ -6,33 +6,25 @@ import com.rch.fuelcounter.drivers.Driver;
 import com.rch.fuelcounter.session.Session;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Класс для сохранения и загрузки данных приложения
+ */
 public class StoredClass implements Serializable {
     private static final String dataFilePath = Session.class.getClassLoader().getResource("").getPath() + "data.bin";
-
     private static final long serialVersionUID = 1L;
 
     private Map<String, Car> cars;
     private Map<String, Driver> drivers;
 
-    public Map<String, Car> getCars() {
-        return cars;
-    }
-
     public void setCars(Map<String, Car> cars) {
         this.cars = cars;
     }
-
-    public Map<String, Driver> getDrivers() {
-        return drivers;
-    }
-
     public void setDrivers(Map<String, Driver> drivers) {
         this.drivers = drivers;
     }
+
 
     public static void loadStoredData() throws LoadDataException {
         try {

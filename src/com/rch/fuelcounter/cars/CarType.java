@@ -1,5 +1,7 @@
 package com.rch.fuelcounter.cars;
 
+import com.rch.fuelcounter.exceptions.ApplicationException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,17 @@ public class CarType implements Serializable {
         this.consumption = consumption;
         this.fuelCost = fuelCost;
         this.nameAdditional = nameAdditional;
+    }
+
+    public static CarType getType(String type) throws ApplicationException {
+        if (type == null)
+            throw new ApplicationException("Пустой тип!");
+        CarType carType = types.get(type);
+        if (carType == null)
+            throw new ApplicationException("Вид траспорта с кодом " + type + " отсутствует");
+
+        return carType;
+
     }
 
     public String getType() {return type;}

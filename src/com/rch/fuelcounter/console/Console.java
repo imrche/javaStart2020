@@ -1,6 +1,7 @@
-package com.rch.fuelcounter.ui;
+package com.rch.fuelcounter.console;
 
-import com.rch.fuelcounter.cars.CarPark;
+import com.rch.fuelcounter.exceptions.ConsoleCommandException;
+import com.rch.fuelcounter.ui.UserType;
 
 import java.util.Scanner;
 
@@ -43,19 +44,29 @@ public class Console {
 
         while(true){
             System.out.print(userLogin + "> ");
-            String[] command = s.nextLine().split(" ");
-            if (!command[0].equals("exit")) {
-                try {
-                    UserCommand userCommand = UserCommand.valueOf(command[0]);
-                    if (userCommand.hasRights(ut))
-                        userCommand.run(command);
+            ParsedInput parsedInput = new ParsedInput(s.nextLine());
+
+            try {
+                ConsoleCmd consoleCmd = ConsoleCmd.valueOf(parsedInput.getCommand().toLowerCase());
+                if (consoleCmd != ConsoleCmd.exit) {
+                    if (consoleCmd.hasRights(ut))
+                        try {
+                            consoleCmd.run(parsedInput);
+                        } catch (ConsoleCommandException e){
+                            System.out.println(e.getMessage());
+                        }
                     else
                         System.out.println("Команда недоступна под данным пользователем");
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Команда не разобрана! (Команда help для помощи)");
+                } else {
+                    consoleCmd.run(null);
+                    break;
                 }
-            } else
-                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Команда не разобрана! (Команда help для помощи)");
+            } catch (com.rch.fuelcounter.exceptions.ConsoleCommandException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
