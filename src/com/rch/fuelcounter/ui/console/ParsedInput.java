@@ -1,9 +1,7 @@
-package com.rch.fuelcounter.console;
+package com.rch.fuelcounter.ui.console;
 
-import com.rch.fuelcounter.exceptions.ApplicationException;
 import com.rch.fuelcounter.exceptions.NullCommandValueException;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -11,21 +9,19 @@ import java.util.regex.Pattern;
 
 /**
  * Класс для разобранной команды из консоли
+ * <p><b>command</b> @String - управляющая команда</p>
+ * <p><b>value</b> @String - значение команды</p>
+ * <p><b>keys</b> @Map - список ключей</p>
  */
 public class ParsedInput {
-    //шаблон поиска "-ключ значение"
-    private final Pattern commandKeyPattern = Pattern.compile("-[a-z]+\\s+[a-z0-9_]+");
 
-    //Управляющая команда
     private String command;
-
-    //значение команды
     private String value;
-
-    //список ключей команды
-    private Map<String,String> keys = new HashMap<>();
+    private final Map<String,String> keys = new HashMap<>();
 
     public ParsedInput(String commandLine){
+        //шаблон поиска "-ключ значение"
+        Pattern commandKeyPattern = Pattern.compile("-[a-z]+\\s+[a-z0-9_./]+");
         Matcher commandKeyMatcher = commandKeyPattern.matcher(commandLine);
         String command = commandLine;
 
@@ -62,15 +58,29 @@ public class ParsedInput {
      * @param command - управляющая команда со значением
      */
     private void addCommand(String command){
-        String[] array = command.split(" ");
-        this.command = array[0];
-        this.value = array.length > 1 ? array[1] : null;
+        this.command = command;
+
+        int firstSpace = command.indexOf(" ");
+
+        if (firstSpace > 0) {
+            this.command = this.command.substring(0, firstSpace);
+            this.value = command.substring(firstSpace).trim();
+        }
     }
 
+    /**
+     * Получить имя управляющей команды
+     * @return имя управляющей команды
+     */
     public String getCommand() {
         return command;
     }
 
+    /**
+     * Получение значения команды
+     * @param def значение по-умолчанию
+     * @return значение команды (если пусто, то переданное значение)
+     */
     public String getValue(String def) {
         return hasValue() ? getValue() : def;
     }
@@ -79,8 +89,13 @@ public class ParsedInput {
         return value;
     }
 
-    public String getValue(Boolean safe) throws NullCommandValueException {
-        if (value == null && safe)
+    /**
+     * Безопастное получение значение команды
+     * @return значение команды
+     * @throws NullCommandValueException если значение пустое
+     */
+    public String safeGetValue() throws NullCommandValueException {
+        if (!hasValue())
             throw new NullCommandValueException("Для " + this.command + " не получено значения");
         return value;
     }
@@ -89,14 +104,12 @@ public class ParsedInput {
         return value != null;
     }
 
-    public boolean hasKeys(){
-        return keys.size() > 0;
-    }
-
-    public Collection<String> getKeys(){
-        return keys.keySet();
-    }
-
+    /**
+     * Получить значение ключа
+     * @param key имя ключа
+     * @param def значение по умолчанию, если для ключа не задано значение
+     * @return значение ключа (если пусто, то переданное в @def значение)
+     */
     public String getKeyValue(String key, String def){
         return keys.getOrDefault(key, def);
     }

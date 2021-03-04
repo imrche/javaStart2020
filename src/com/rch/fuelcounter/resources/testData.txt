@@ -1,0 +1,53 @@
+addcar -t 100 1
+addcar -t 100 2
+addcar -t 100 3
+addcar -t 200 1
+addcar -t 200 2
+addcar -t 200 3
+addcar -t 300 1
+addcar -t 300 2
+addcar -t 300 3
+addcar -t 400 1
+addcar -t 400 2
+addcar -t 400 3
+hiredriver -l drv1 Иванов Иван Иванович
+hiredriver -l drv2 Петров Петр Петрович
+hiredriver -l drv3 Никодимов Никодим Никодимович
+hiredriver -l drv4 Александров Александр Александрович
+hiredriver -l drv5 Алексеев Алексей Алексеевич
+hiredriver -l drv6 Макаров Макар Макрович
+hiredriver -l drv7 Сергеев Сергей Сергеевич
+hiredriver -l drv8 Челубеев Челубей Челубеевич
+hiredriver -l drv9 Пересветов Пересвет Пересветович
+hiredriver -l drv10 Акакиев Акакий Акакакиевич
+hiredriver -l drv11 Сидоров Сидр Сидорович
+hiredriver -l drv12 Пампушка Марья Петровна
+appoint -v 100_1 drv1
+appoint -v 100_2 drv2
+appoint -v 100_3 drv3
+appoint -v 200_1 drv4
+appoint -v 200_2 drv5
+appoint -v 200_3 drv6
+appoint -v 300_1 drv7
+appoint -v 300_2 drv8
+appoint -v 300_3 drv9
+appoint -v 400_1 drv10
+appoint -v 400_2 drv11
+appoint -v 400_3 drv12
+opensession
+add C100_1-100
+add C200_1-120-1200
+add C300_1-120-30
+add C400_1-80-20
+add C100_2-50
+add C200_2-40-1000
+add C300_2-200-45
+add C400_2-10-20
+add C100_3-10
+add C200_3-170-1100
+add C300_3-150-29
+add C400_3-100-28
+add C100_1-300
+add C200_1-100-750
+add C300_1-32-15
+closesession

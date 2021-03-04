@@ -1,13 +1,7 @@
 package com.rch.fuelcounter.exceptions;
 
-public class LoadDataException extends Exception{
-    private String text;
-
-    public LoadDataException(String text){
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
+public class LoadDataException extends ApplicationException{
+    public LoadDataException(String message) {
+        super(message);
     }
 }

@@ -1,9 +1,12 @@
-package com.rch.fuelcounter.session;
+package com.rch.fuelcounter.data.session;
 
-import com.rch.fuelcounter.exceptions.NotCorrectAnalysePeriod;
+import com.rch.fuelcounter.exceptions.ApplicationException;
+import com.rch.fuelcounter.exceptions.IncorrectInputData;
+import com.rch.fuelcounter.exceptions.LoadDataException;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public class SessionDataManager {
 
-    private static final String sessionsStorePath = Session.class.getClassLoader().getResource("").getPath() + "sessions/";
+    private static final String sessionsStorePath = Objects.requireNonNull(Session.class.getClassLoader().getResource("")).getPath() + "sessions/";
     private static final String sessionFileExtension = ".txt";
 
     /**
@@ -29,7 +32,7 @@ public class SessionDataManager {
      * @param endPeriod - окончание периода сбора
      * @return готовые к анализу данные смен
      */
-    public static AnalysisData collectAnalysisData(String startPeriod, String endPeriod) {
+    public static AnalysisData collectAnalysisData(String startPeriod, String endPeriod) throws ApplicationException {
         return new AnalysisData(toNameSessionFormat(startPeriod),toNameSessionFormat(endPeriod));
     }
 
@@ -39,18 +42,20 @@ public class SessionDataManager {
      * @param endDate - окончание периода
      * @return список собранных данных
      */
-    public static List<String> getSessionData(Integer startDate, Integer endDate) {
+    public static List<String> getSessionData(Integer startDate, Integer endDate) throws ApplicationException {
 
         File dir = new File(sessionsStorePath);
         List<String> list = new ArrayList<>();
         for (File file : Objects.requireNonNull(dir.listFiles())) {
-            if (isMatching(file.getName(), startDate, endDate))
+            if (isMatching(file.getName(), startDate, endDate)) {
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(file));
                     list.addAll(reader.lines().collect(Collectors.toList()));
-                } catch (Exception e) {
-                    e.printStackTrace();//todo описать
+                } catch (FileNotFoundException e) {
+                    throw new LoadDataException("Ошибка открытия файла с данными смены " + file.getName() + "!");
                 }
+            }
+
         }
         return list;
     }
@@ -96,10 +101,6 @@ public class SessionDataManager {
         return new File(getSessionPath()).exists();
     }
 
-/*    public static List<String> getSessionData(String onDate){
-        return getSessionData(onDate, null);
-    }*/
-
     /**
      * Проверка имени файла соответствует формату и запрошенному периоду
      * @param fileName - имя проверяемого файла
@@ -124,15 +125,14 @@ public class SessionDataManager {
      * @param unformattedString - строка с ожидаемым форматом dd/MM/yy
      * @return число полученное из даты форматом yyyyMMdd
      */
-    private static Integer toNameSessionFormat(String unformattedString){
+    private static Integer toNameSessionFormat(String unformattedString) throws IncorrectInputData {
         if (unformattedString == null) return null;
-        unformattedString = unformattedString.replaceAll(":|\\.|;","/");
+        unformattedString = unformattedString.replaceAll("[:/;]",".");
         try {
-            Date date = new SimpleDateFormat("dd/MM/yy").parse(unformattedString);
+            Date date = new SimpleDateFormat("dd.MM.yy").parse(unformattedString);
             return Integer.parseInt(getSessionName(date));
         } catch (ParseException e) {
-            e.printStackTrace();//todo проброс исключения
+            throw new IncorrectInputData("Ошибка при попытке разбора даты -> " + unformattedString);
         }
-        return null;
     }
 }
