@@ -1,31 +1,49 @@
 package com.rch.fuelcounter.util;
 
-public class Util {
-    public static String[] parse(String str){
-        String[] result = new String[4];
-        StringBuilder builder = new StringBuilder();
-        int i = 0;
+import com.sun.istack.internal.Nullable;
 
-        for (Character c : str.toCharArray()) {
-            if (c == 'C') {continue;}
-            if (c == '-' || c == '_'){
-                result[i++] = builder.toString();
-                builder = new StringBuilder();
-                continue;
-            }
-            builder.append(c);
+import java.util.Arrays;
+
+/**
+ * Утильная библиотека
+ */
+public class Util {
+    /**
+     * Расширение строки до указанного размера пробелами
+     * @param str строка для обработки
+     * @param length длина итоговой строки (>0 - справа, <0 - слева
+     *               )
+     * @return строку длиной == length
+     */
+    public static String toLength(@Nullable String str, int length){
+        boolean leftPlacement = length < 0;
+        length = Math.abs(length);
+        if (str != null) {
+            if (str.length() == length)
+                return str;
+            if (length < str.length())
+                return str.substring(0, length);
         }
 
-        result[i]= builder.toString();
+        char[] spaces = new char[100];
+        Arrays.fill(spaces, (char) 0x20);
+        if (str == null)
+            return String.valueOf(spaces).substring(0,length);
 
-        return result;
+        String spacesString = String.valueOf(spaces).substring(0, length - str.length());
+        if (leftPlacement)
+            return spacesString + str;
+        else
+            return str + spacesString;
     }
 
-    public static boolean compare(Float f1, Float f2, boolean max){
-        return (f1 >= f2 && max) || (f1 <= f2 && !max);
-    }
 
-    public static Integer nvl(Integer a, Integer b){
-        return a != null ? a : b;
+    /**
+     * Округление до 2х знаков после запятой
+     * @param f число
+     * @return строка в формате
+     */
+    public static String round(Float f){
+        return String.format("%.2f",f);
     }
 }
