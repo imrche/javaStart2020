@@ -445,11 +445,7 @@ public enum ConsoleCmd {
 
         @Override
         public void run(ParsedInput command) throws ConsoleCommandException {
-            try {
-                FirstInitApp.fillAppWithTestData();
-            } catch (IOException e) {
-                throw new ConsoleCommandException("В процессе работы с файлом с тестовыми данными возникли ошибки " + e.getMessage());
-            }
+            FirstInitApp.fillAppWithTestData();
         }
     }
     ;

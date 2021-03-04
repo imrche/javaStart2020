@@ -39,22 +39,24 @@ public class FirstInitApp {
 
     /**
      * Заполенение приложения тестовыми данными из файла testData.txt
-     * @throws IOException при ошибках работы с testData.txt
-     * @throws ConsoleCommandException при выполнении консольных команд из файла
+     * @throws ConsoleCommandException при выполнении консольных команд из файла и при открытии файла
      */
-    public static void fillAppWithTestData() throws IOException, ConsoleCommandException {
+    public static void fillAppWithTestData() throws ConsoleCommandException {
         String filePath = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("")).getPath() + "testData.txt";
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
 
-        String ln;
-        while ((ln = bufferedReader.readLine()) != null){
-            ParsedInput parsedInput = new ParsedInput(ln);
-            ConsoleCmd.valueOf(parsedInput.getCommand().toLowerCase()).run(parsedInput);
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))){
+            String ln;
+            while ((ln = bufferedReader.readLine()) != null) {
+                ParsedInput parsedInput = new ParsedInput(ln);
+                ConsoleCmd.valueOf(parsedInput.getCommand()).run(parsedInput);
+            }
+        } catch (IOException e){
+            throw new ConsoleCommandException("В процессе работы с файлом с тестовыми данными возникли ошибки " + e.getMessage());
         }
         try {
             StoredData.saveStoredData();
         } catch (SaveDataException e) {
-            System.out.println(e.getMessage());
+            throw new ConsoleCommandException(e.getMessage());
         }
     }
 }

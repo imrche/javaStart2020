@@ -31,8 +31,7 @@ public class StoredData implements Serializable {
      * @throws LoadDataException файл с данными не существует
      */
     public static void loadStoredData() throws LoadDataException {
-        try {
-            FileInputStream r = new FileInputStream(dataFilePath);
+        try(FileInputStream r = new FileInputStream(dataFilePath)) {
             if (r.available() > 0) {
                 ObjectInputStream o = new ObjectInputStream(r);
                 StoredData storedData = (StoredData) o.readObject();
@@ -47,7 +46,7 @@ public class StoredData implements Serializable {
         } catch (FileNotFoundException e) {
             throw new LoadDataException("Файл с сохраненными данными отсутствует!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new LoadDataException(e.getMessage());
         }
     }
 

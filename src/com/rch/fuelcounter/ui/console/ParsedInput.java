@@ -3,6 +3,7 @@ package com.rch.fuelcounter.ui.console;
 import com.rch.fuelcounter.exceptions.NullCommandValueException;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +67,7 @@ public class ParsedInput {
             this.command = this.command.substring(0, firstSpace);
             this.value = command.substring(firstSpace).trim();
         }
+        this.command = this.command.toLowerCase();
     }
 
     /**

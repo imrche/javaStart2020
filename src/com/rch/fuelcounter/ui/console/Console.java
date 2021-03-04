@@ -57,7 +57,7 @@ public class Console {
             ParsedInput parsedInput = new ParsedInput(s.nextLine());
 
             try {
-                ConsoleCmd consoleCmd = ConsoleCmd.valueOf(parsedInput.getCommand().toLowerCase());
+                ConsoleCmd consoleCmd = ConsoleCmd.valueOf(parsedInput.getCommand());
                 if (consoleCmd != ConsoleCmd.exit) {
                     if (consoleCmd.hasRights(ut))
                         try {
